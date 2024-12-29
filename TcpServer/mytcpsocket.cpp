@@ -10,11 +10,15 @@ MyTcpSocket::MyTcpSocket(QObject *parent)
 
 void MyTcpSocket::recvMsg()
 {
-    qDebug() << "总数据大小：" << this->bytesAvailable(); // 打印接收到的大小
+    // qDebug() << "总数据大小：" << this->bytesAvailable(); // 打印接收到的大小
     uint uiPDULen = 0;
     this->read((char*)&uiPDULen, sizeof(uint)); // 获取总的大小
     uint uiMsgLen = uiPDULen - sizeof(PDU);  // 计算实际的消息长度
     PDU *pdu = mkPDU(uiMsgLen);
     this->read((char*)pdu+sizeof(uint), uiPDULen - sizeof(uint));
-    qDebug() << pdu->uiMsgType << (char*)(pdu->caMsg);
+    char caName[32] = {'\0'};
+    char caPwd[32] = {'\0'};
+    strncpy(caName, pdu->caData, 32);
+    strncpy(caPwd, pdu->caData + 32, 32);
+    qDebug() << caName << caPwd << pdu->uiMsgType;
 }

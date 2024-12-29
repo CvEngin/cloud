@@ -248,6 +248,7 @@ Makefile: ../../TcpServer.pro D:/Qt/6.6.3/mingw_64/mkspecs/win32-g++/qmake.conf 
 		D:/Qt/6.6.3/mingw_64/lib/Qt6Widgets.prl \
 		D:/Qt/6.6.3/mingw_64/lib/Qt6Gui.prl \
 		D:/Qt/6.6.3/mingw_64/lib/Qt6Network.prl \
+		D:/Qt/6.6.3/mingw_64/lib/Qt6Sql.prl \
 		D:/Qt/6.6.3/mingw_64/lib/Qt6Core.prl \
 		D:/Qt/6.6.3/mingw_64/lib/Qt6EntryPoint.prl \
 		D:/Qt/6.6.3/mingw_64/mkspecs/features/build_pass.prf \
@@ -431,6 +432,7 @@ D:/Qt/6.6.3/mingw_64/mkspecs/features/lex.prf:
 D:/Qt/6.6.3/mingw_64/lib/Qt6Widgets.prl:
 D:/Qt/6.6.3/mingw_64/lib/Qt6Gui.prl:
 D:/Qt/6.6.3/mingw_64/lib/Qt6Network.prl:
+D:/Qt/6.6.3/mingw_64/lib/Qt6Sql.prl:
 D:/Qt/6.6.3/mingw_64/lib/Qt6Core.prl:
 D:/Qt/6.6.3/mingw_64/lib/Qt6EntryPoint.prl:
 D:/Qt/6.6.3/mingw_64/mkspecs/features/build_pass.prf:

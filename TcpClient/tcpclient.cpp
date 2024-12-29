@@ -44,6 +44,7 @@ void TcpClient::showConnect()
     QMessageBox::information(this, "连接服务器", "连接服务器成功");
 }
 
+#if 0
 void TcpClient::on_send_pb_clicked()
 {
     QString strMsg = ui->lineEdit->text();
@@ -57,5 +58,36 @@ void TcpClient::on_send_pb_clicked()
     } else {
         QMessageBox::warning(this, "信息发送", "发送的数据不能为空");
     }
+}
+#endif
+
+
+void TcpClient::on_login_pb_clicked()
+{
+
+}
+
+
+void TcpClient::on_regist_pb_clicked()
+{
+    QString strName = ui->name_le->text();
+    QString strPwd = ui->pwd_le->text();
+    if (!strName.isEmpty() && !strPwd.isEmpty()) {
+        PDU *pdu = mkPDU(0);
+        pdu->uiMsgType = ENUM_MSG_TYPE_REQUEST;
+        strncpy(pdu->caData, strName.toStdString().c_str(), 32);
+        strncpy(pdu->caData + 32, strPwd.toStdString().c_str(), 32);
+        m_tcpSocket.write((char*)pdu, pdu->uiPDULen);
+        free(pdu);
+        pdu = NULL;
+    } else {
+        QMessageBox::critical(this, "注册", "注册失败:用户名或密码为空");
+    }
+}
+
+
+void TcpClient::on_cancel_pb_clicked()
+{
+
 }
 
