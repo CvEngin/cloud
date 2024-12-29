@@ -33,7 +33,6 @@ void TcpServer::loadConfig()
         QStringList strList = strData.split(" ");
         m_strIP = strList.at(0);
         m_usPort = strList.at(1).toUShort();
-        qDebug() << m_strIP << " " << m_usPort;
     } else {
         QMessageBox::critical(this, "Open Config", "Open Config failed");
     }
