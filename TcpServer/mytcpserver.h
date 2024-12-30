@@ -14,6 +14,9 @@ public:
 
     void incomingConnection(qintptr handle);
 
+public slots:
+    void deleteSocket(MyTcpSocket *mySocket);
+
 private:
     QList<MyTcpSocket*> m_tcpSocketList;
 };

@@ -24,6 +24,7 @@ public:
 
 public slots:
     void showConnect();
+    void recvMsg();
 
 private slots:
     // void on_send_pb_clicked();

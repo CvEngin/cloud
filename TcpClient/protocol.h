@@ -7,17 +7,24 @@
 
 typedef unsigned int uint;
 
+#define REGIST_OK "regist ok"
+#define REGIST_FAILED "regist failed : name existed"
+#define LOGIN_OK "login ok"
+#define LOGIN_FAILED "login failed : name error or pwd error or relogin"
+
 enum ENUM_MSG_TYPE {
     ENUM_MSG_TYPE_MIN = 0,
-    ENUM_MSG_TYPE_REQUEST,  // 注册请求，自动增长，为1
-    ENUM_MSG_TYPE_RESPOND,  // 注册回复
+    ENUM_MSG_TYPE_REGIST_REQUEST,  // 注册请求，自动增加，为1
+    ENUM_MSG_TYPE_REGIST_RESPOND,  // 注册回复
+    ENUM_MSG_TYPE_LOGIN_REQUEST,  // 登录请求
+    ENUM_MSG_TYPE_LOGIN_RESPOND,  // 登录回复
     ENUM_MSG_TYPE_MAX = 0x00ffffff,
 };
 
 struct PDU{
     uint uiPDULen;  // 总的协议数据单元大小
     uint uiMsgType;  // 消息类型
-    char caData[64];  // 用户信息
+    char caData[64];  // 存放额外信息，如用户信息等
     uint uiMsgLen;  // 实际消息长度
     int caMsg[];  // 实际消息
 };

@@ -14,6 +14,8 @@ TcpClient::TcpClient(QWidget *parent)
 
     connect(&m_tcpSocket, SIGNAL(connected())
             , this, SLOT(showConnect()));
+    connect(&m_tcpSocket, SIGNAL(readyRead())
+            , this, SLOT(recvMsg()));
     m_tcpSocket.connectToHost(QHostAddress(m_strIP), m_usPort);
 }
 
@@ -44,6 +46,36 @@ void TcpClient::showConnect()
     QMessageBox::information(this, "连接服务器", "连接服务器成功");
 }
 
+void TcpClient::recvMsg()
+{
+    uint uiPDULen = 0;
+    m_tcpSocket.read((char*)&uiPDULen, sizeof(uint)); // 获取总的大小
+    uint uiMsgLen = uiPDULen - sizeof(PDU);  // 计算实际的消息长度
+    PDU *pdu = mkPDU(uiMsgLen);
+    m_tcpSocket.read((char*)pdu+sizeof(uint), uiPDULen - sizeof(uint));
+    switch(pdu->uiMsgType) {
+    case ENUM_MSG_TYPE_REGIST_RESPOND: {
+        if (strcmp(pdu->caData, REGIST_OK) == 0) {
+            QMessageBox::information(this, "注册", REGIST_OK);
+        } else if (strcmp(pdu->caData, REGIST_FAILED) == 0) {
+            QMessageBox::information(this, "注册", REGIST_FAILED);
+        }
+        break;
+    }
+    case ENUM_MSG_TYPE_LOGIN_RESPOND: {
+        if (strcmp(pdu->caData, LOGIN_OK) == 0) {
+            QMessageBox::information(this, "登录", LOGIN_OK);
+        } else if (strcmp(pdu->caData, LOGIN_FAILED) == 0) {
+            QMessageBox::information(this, "登录", LOGIN_FAILED);
+        }
+        break;
+    }
+    default: break;
+    }
+    free(pdu);
+    pdu = NULL;
+}
+
 #if 0
 void TcpClient::on_send_pb_clicked()
 {
@@ -62,19 +94,33 @@ void TcpClient::on_send_pb_clicked()
 #endif
 
 
+// 登录点击事件
 void TcpClient::on_login_pb_clicked()
 {
-
+    QString strName = ui->name_le->text();
+    QString strPwd = ui->pwd_le->text();
+    if (!strName.isEmpty() && !strPwd.isEmpty()) {
+        PDU *pdu = mkPDU(0);
+        pdu->uiMsgType = ENUM_MSG_TYPE_LOGIN_REQUEST;
+        strncpy(pdu->caData, strName.toStdString().c_str(), 32);
+        strncpy(pdu->caData + 32, strPwd.toStdString().c_str(), 32);
+        m_tcpSocket.write((char*)pdu, pdu->uiPDULen);
+        free(pdu);
+        pdu = NULL;
+    } else {
+        QMessageBox::critical(this, "登录", "登录失败:用户名或密码为空");
+    }
 }
 
 
+// 注册点击事件
 void TcpClient::on_regist_pb_clicked()
 {
     QString strName = ui->name_le->text();
     QString strPwd = ui->pwd_le->text();
     if (!strName.isEmpty() && !strPwd.isEmpty()) {
         PDU *pdu = mkPDU(0);
-        pdu->uiMsgType = ENUM_MSG_TYPE_REQUEST;
+        pdu->uiMsgType = ENUM_MSG_TYPE_REGIST_REQUEST;
         strncpy(pdu->caData, strName.toStdString().c_str(), 32);
         strncpy(pdu->caData + 32, strPwd.toStdString().c_str(), 32);
         m_tcpSocket.write((char*)pdu, pdu->uiPDULen);
