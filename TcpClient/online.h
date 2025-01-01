@@ -2,7 +2,7 @@
 #define ONLINE_H
 
 #include <QWidget>
-
+#include "protocol.h"
 
 // 显示在线好友界面
 namespace Ui {
@@ -16,6 +16,8 @@ class Online : public QWidget
 public:
     explicit Online(QWidget *parent = nullptr);
     ~Online();
+
+    void showUsr(PDU *pdu);
 
 private:
     Ui::Online *ui;

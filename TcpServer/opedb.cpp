@@ -75,3 +75,16 @@ void OpeDB::handleOffline(const char *name)
     QSqlQuery query;
     query.exec(data);
 }
+
+QStringList OpeDB::handleAllOnline()
+{
+    QString data = QString("select name from usrInfo where online = 1");
+    QSqlQuery query;
+    query.exec(data);
+    QStringList res;
+    res.clear();
+    while (query.next()) {
+        res.append(query.value(0).toString());
+    }
+    return res;
+}

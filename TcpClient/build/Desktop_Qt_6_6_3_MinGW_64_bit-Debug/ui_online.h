@@ -41,8 +41,6 @@ public:
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName("horizontalLayout");
         online_lw = new QListWidget(Online);
-        new QListWidgetItem(online_lw);
-        new QListWidgetItem(online_lw);
         online_lw->setObjectName("online_lw");
         QFont font;
         font.setPointSize(10);
@@ -80,15 +78,6 @@ public:
     void retranslateUi(QWidget *Online)
     {
         Online->setWindowTitle(QCoreApplication::translate("Online", "Form", nullptr));
-
-        const bool __sortingEnabled = online_lw->isSortingEnabled();
-        online_lw->setSortingEnabled(false);
-        QListWidgetItem *___qlistwidgetitem = online_lw->item(0);
-        ___qlistwidgetitem->setText(QCoreApplication::translate("Online", "11111", nullptr));
-        QListWidgetItem *___qlistwidgetitem1 = online_lw->item(1);
-        ___qlistwidgetitem1->setText(QCoreApplication::translate("Online", "22222", nullptr));
-        online_lw->setSortingEnabled(__sortingEnabled);
-
         addFriend_pb->setText(QCoreApplication::translate("Online", "\345\212\240\345\245\275\345\217\213", nullptr));
     } // retranslateUi
 

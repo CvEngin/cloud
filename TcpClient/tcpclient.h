@@ -25,6 +25,9 @@ public:
     ~TcpClient();
     void loadConfig();
 
+    static TcpClient &getInstance();
+    QTcpSocket &getTcpSokcet();
+
 public slots:
     void showConnect();
     void recvMsg();

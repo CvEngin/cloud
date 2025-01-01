@@ -9,12 +9,14 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include "online.h"
+#include "protocol.h"
 
 class Friend : public QWidget
 {
     Q_OBJECT
 public:
     explicit Friend(QWidget *parent = nullptr);
+    void showAllOnlineUsr(PDU *pdu);
 
 signals:
 

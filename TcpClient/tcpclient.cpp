@@ -41,6 +41,17 @@ void TcpClient::loadConfig()
     }
 }
 
+TcpClient &TcpClient::getInstance()
+{
+    static TcpClient instance;
+    return instance;
+}
+
+QTcpSocket &TcpClient::getTcpSokcet()
+{
+    return m_tcpSocket;
+}
+
 void TcpClient::showConnect()
 {
     QMessageBox::information(this, "连接服务器", "连接服务器成功");
@@ -70,6 +81,10 @@ void TcpClient::recvMsg()
         } else if (strcmp(pdu->caData, LOGIN_FAILED) == 0) {
             QMessageBox::information(this, "登录", LOGIN_FAILED);
         }
+        break;
+    }
+    case ENUM_MSG_TYPE_ALL_ONLINE_RESPOND: {
+        OpeWidget::getInstance().getFriend()->showAllOnlineUsr(pdu);
         break;
     }
     default: break;
