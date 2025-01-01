@@ -5,6 +5,7 @@
 #include "protocol.h"
 #include "opedb.h"
 
+// 信号处理
 class MyTcpSocket : public QTcpSocket
 {
     Q_OBJECT

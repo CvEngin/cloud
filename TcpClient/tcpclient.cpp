@@ -65,6 +65,8 @@ void TcpClient::recvMsg()
     case ENUM_MSG_TYPE_LOGIN_RESPOND: {
         if (strcmp(pdu->caData, LOGIN_OK) == 0) {
             QMessageBox::information(this, "登录", LOGIN_OK);
+            OpeWidget::getInstance().show();
+            this->hide();
         } else if (strcmp(pdu->caData, LOGIN_FAILED) == 0) {
             QMessageBox::information(this, "登录", LOGIN_FAILED);
         }

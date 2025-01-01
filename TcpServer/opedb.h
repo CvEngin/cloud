@@ -5,6 +5,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 
+// 数据库操作封装
 class OpeDB : public QObject
 {
     Q_OBJECT

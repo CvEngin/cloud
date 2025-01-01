@@ -5,6 +5,7 @@
 #include <QList>
 #include "mytcpsocket.h"
 
+// 信号接收
 class MyTcpServer : public QTcpServer
 {
     Q_OBJECT

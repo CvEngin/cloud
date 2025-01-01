@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <QString>
 
+// 协议封装
 typedef unsigned int uint;
 
 #define REGIST_OK "regist ok"
