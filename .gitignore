@@ -3,3 +3,6 @@
 /TcpClient/TcpClient.pro.user
 /TcpServer/build
 /TcpServer/TcpServer.pro.user
+TcpClient/TcpClient.pro.user
+*.user
+TcpServer/TcpServer.pro.user
