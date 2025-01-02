@@ -28,10 +28,11 @@ void TcpServer::loadConfig()
         QByteArray baData = file.readAll();
         QString strData = baData.toStdString().c_str();
         file.close();
-        strData.replace("\r\n", " ");
+        strData.replace("\n", " ");
         QStringList strList = strData.split(" ");
         m_strIP = strList.at(0);
         m_usPort = strList.at(1).toUShort();
+        qDebug() << m_strIP << m_usPort;
     } else {
         QMessageBox::critical(this, "Open Config", "Open Config failed");
     }

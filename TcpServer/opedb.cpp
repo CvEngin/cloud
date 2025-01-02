@@ -17,7 +17,8 @@ OpeDB &OpeDB::getInstance()
 void OpeDB::init()
 {
     m_db.setHostName("localhost");
-    m_db.setDatabaseName("D:\\sourceCode\\cloud\\cloud.db");
+    // m_db.setDatabaseName("D:\\sourceCode\\cloud\\cloud.db");
+    m_db.setDatabaseName("G:\\cloud\\cloud.db");
     if (m_db.open()) {
         QSqlQuery query;
         query.exec("select * from usrInfo");

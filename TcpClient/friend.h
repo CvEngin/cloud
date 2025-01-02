@@ -22,6 +22,7 @@ signals:
 
 public slots:
     void showOnline();
+    void searchUsr();
 
 private:
     QTextEdit *m_pshowMsgTE;
