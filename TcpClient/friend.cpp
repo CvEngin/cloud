@@ -72,9 +72,10 @@ void Friend::showOnline()
 
 void Friend::searchUsr()
 {
-    QString name = QInputDialog::getText(this, "搜索", "用户名: ");
-    if (!name.isEmpty()) {
+    m_strSearchName = QInputDialog::getText(this, "搜索", "用户名: ");
+    if (!m_strSearchName.isEmpty()) {
         PDU *pdu = mkPDU(0);
+        memcpy(pdu->caData, m_strSearchName.toStdString().c_str(), m_strSearchName.size());
         pdu->uiMsgType = ENUM_MSG_TYPE_SEARCH_USR_REQUEST;
         TcpClient::getInstance().getTcpSokcet().write((char*)pdu, pdu->uiPDULen);
         free(pdu);

@@ -87,6 +87,10 @@ void TcpClient::recvMsg()
         OpeWidget::getInstance().getFriend()->showAllOnlineUsr(pdu);
         break;
     }
+    case ENUM_MSG_TYPE_SEARCH_USR_RESPOND: {
+        QMessageBox::information(this, "搜索", QString("%1: %2").arg(OpeWidget::getInstance().getFriend()->m_strSearchName).arg(pdu->caData));
+        break;
+    }
     default: break;
     }
     free(pdu);

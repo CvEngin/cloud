@@ -18,6 +18,8 @@ public:
     explicit Friend(QWidget *parent = nullptr);
     void showAllOnlineUsr(PDU *pdu);
 
+    QString m_strSearchName;
+
 signals:
 
 public slots:
@@ -37,6 +39,7 @@ private:
     QPushButton *m_pPrivateChatPB;
 
     Online *m_pOnline;
+
 };
 
 #endif // FRIEND_H

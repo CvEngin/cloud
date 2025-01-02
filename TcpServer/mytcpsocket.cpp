@@ -49,10 +49,10 @@ void MyTcpSocket::recvMsg()
         char caPwd[32] = {'\0'};
         strncpy(caName, pdu->caData, 32);
         strncpy(caPwd, pdu->caData + 32, 32);
-        bool ret = OpeDB::getInstance().handleLogin(caName, caPwd);
+        bool res = OpeDB::getInstance().handleLogin(caName, caPwd);
         PDU *respdu = mkPDU(0);
         respdu->uiMsgType = ENUM_MSG_TYPE_LOGIN_RESPOND;
-        if (ret) {
+        if (res) {
             strcpy(respdu->caData, LOGIN_OK);
             m_strName = caName;
         } else {
@@ -70,6 +70,22 @@ void MyTcpSocket::recvMsg()
         respdu->uiMsgType = ENUM_MSG_TYPE_ALL_ONLINE_RESPOND;
         for (int i = 0; i < res.size(); i++) {
             memcpy((char*)(respdu->caMsg) + i * 32, res.at(i).toStdString().c_str(), res.at(i).size());
+        }
+        write((char*)respdu, respdu->uiPDULen);
+        free(respdu);
+        respdu = NULL;
+        break;
+    }
+    case ENUM_MSG_TYPE_SEARCH_USR_REQUEST: {
+        int res = OpeDB::getInstance().handleSearchUsr(pdu->caData);
+        PDU *respdu = mkPDU(0);
+        respdu->uiMsgType = ENUM_MSG_TYPE_SEARCH_USR_RESPOND;
+        if (res == -1) {
+            strcpy(respdu->caData, SEARCH_USR_NO);
+        } else if (res == 1) {
+            strcpy(respdu->caData, SEARCH_USR_ONLINE);
+        } else {
+            strcpy(respdu->caData, SEARCH_USR_OFFLINE);
         }
         write((char*)respdu, respdu->uiPDULen);
         free(respdu);
