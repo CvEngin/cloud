@@ -91,6 +91,37 @@ void TcpClient::recvMsg()
         QMessageBox::information(this, "搜索", QString("%1: %2").arg(OpeWidget::getInstance().getFriend()->m_strSearchName).arg(pdu->caData));
         break;
     }
+    case ENUM_MSG_TYPE_ADD_FRIEND_REQUEST: {
+        char caName[32] = {'\0'};
+        strncpy(caName, pdu->caData + 32, 32);
+        int res = QMessageBox::information(this, "好友申请", QString("%1 want to add you").arg(caName)
+                                 , QMessageBox::Ok, QMessageBox::No);
+
+        PDU * respdu = mkPDU(0);
+        memcpy(respdu->caData, pdu->caData, 32);
+        memcpy(respdu->caData + 32, pdu->caData + 32, 32);
+        if (res == QMessageBox::Ok) {
+            respdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_AGREE;
+        } else {
+            respdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_REFUSE;
+        }
+        m_tcpSocket.write((char*)respdu, respdu->uiPDULen);
+        free(respdu);
+        respdu = NULL;
+        break;
+    }
+    case ENUM_MSG_TYPE_ADD_FRIEND_RESPOND: {
+        QMessageBox::information(this, "添加好友", pdu->caData);
+        break;
+    }
+    case ENUM_MSG_TYPE_ADD_FRIEND_AGREE: {
+        QMessageBox::information(this, "添加好友", QString("%1 已同意您的好友申请！").arg(pdu->caData));
+        break;
+    }
+    case ENUM_MSG_TYPE_ADD_FRIEND_REFUSE: {
+        QMessageBox::information(this, "添加好友", QString("%1 已拒绝您的好友申请！").arg(pdu->caData));
+        break;
+    }
     default: break;
     }
     free(pdu);
@@ -121,6 +152,7 @@ void TcpClient::on_login_pb_clicked()
     QString strName = ui->name_le->text();
     QString strPwd = ui->pwd_le->text();
     if (!strName.isEmpty() && !strPwd.isEmpty()) {
+        m_strLoginName = strName;
         PDU *pdu = mkPDU(0);
         pdu->uiMsgType = ENUM_MSG_TYPE_LOGIN_REQUEST;
         strncpy(pdu->caData, strName.toStdString().c_str(), 32);
@@ -156,5 +188,10 @@ void TcpClient::on_regist_pb_clicked()
 void TcpClient::on_cancel_pb_clicked()
 {
 
+}
+
+QString TcpClient::strLoginName() const
+{
+    return m_strLoginName;
 }
 

@@ -10,22 +10,40 @@ typedef unsigned int uint;
 
 #define REGIST_OK "regist ok"
 #define REGIST_FAILED "regist failed : name existed"
+
 #define LOGIN_OK "login ok"
 #define LOGIN_FAILED "login failed : name error or pwd error or relogin"
+
 #define SEARCH_USR_NO "No such people"
 #define SEARCH_USR_ONLINE "online"
 #define SEARCH_USR_OFFLINE "offline"
 
+#define UNKNOW_ERROR "unknow error"
+#define EXIST_FRIEND "friend exist"
+#define ADD_FRIEND_OFFLINE "usr offline"
+#define ADD_FRIEND_NOEXIST "usr not exist"
+
+
 enum ENUM_MSG_TYPE {
     ENUM_MSG_TYPE_MIN = 0,
+
     ENUM_MSG_TYPE_REGIST_REQUEST,  // 注册请求，自动增加，为1
     ENUM_MSG_TYPE_REGIST_RESPOND,  // 注册回复
+
     ENUM_MSG_TYPE_LOGIN_REQUEST,  // 登录请求
     ENUM_MSG_TYPE_LOGIN_RESPOND,  // 登录回复
+
     ENUM_MSG_TYPE_ALL_ONLINE_REQUEST,  // 在线用户请求
     ENUM_MSG_TYPE_ALL_ONLINE_RESPOND,  // 在线用户回复
+
     ENUM_MSG_TYPE_SEARCH_USR_REQUEST,  // 搜索用户请求
     ENUM_MSG_TYPE_SEARCH_USR_RESPOND,  // 搜索用户回复
+
+    ENUM_MSG_TYPE_ADD_FRIEND_REQUEST,  // 加好友请求
+    ENUM_MSG_TYPE_ADD_FRIEND_RESPOND,  // 加好友回复
+    ENUM_MSG_TYPE_ADD_FRIEND_AGREE,  // 同意加好友回复
+    ENUM_MSG_TYPE_ADD_FRIEND_REFUSE,  // 拒绝加好友回复
+
     ENUM_MSG_TYPE_MAX = 0x00ffffff,
 };
 

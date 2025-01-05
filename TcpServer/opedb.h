@@ -21,6 +21,9 @@ public:
     void handleOffline(const char *name);
     QStringList handleAllOnline();
     int handleSearchUsr(const char *name);
+    int handleAddFriend(const char *perName, const char *loginName);
+    int getIdByUserName(const char *name);
+    void handleAddFriendAgree(const char *perName, const char *loginName);
 
 signals:
 

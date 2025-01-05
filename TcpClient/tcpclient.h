@@ -28,6 +28,8 @@ public:
     static TcpClient &getInstance();
     QTcpSocket &getTcpSokcet();
 
+    QString strLoginName() const;
+
 public slots:
     void showConnect();
     void recvMsg();
@@ -48,5 +50,6 @@ private:
 
     // 连接服务器，和服务器数据交互
     QTcpSocket m_tcpSocket;
+    QString m_strLoginName; // 当前登录用户的用户名
 };
 #endif // TCPCLIENT_H

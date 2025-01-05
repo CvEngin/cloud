@@ -1,5 +1,6 @@
 #include "mytcpsocket.h"
 #include <QDebug>
+#include <mytcpserver.h>
 
 MyTcpSocket::MyTcpSocket(QObject *parent)
     : QTcpSocket{parent}
@@ -90,6 +91,55 @@ void MyTcpSocket::recvMsg()
         write((char*)respdu, respdu->uiPDULen);
         free(respdu);
         respdu = NULL;
+        break;
+    }
+    case ENUM_MSG_TYPE_ADD_FRIEND_REQUEST: {
+        char caPerName[32] = {'\0'};
+        char caLoginName[32] = {'\0'};
+        strncpy(caPerName, pdu->caData, 32);
+        strncpy(caLoginName, pdu->caData + 32, 32);
+        int ret = OpeDB::getInstance().handleAddFriend(caPerName, caLoginName);
+        PDU *respdu = mkPDU(0);
+        respdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_RESPOND;
+        if (ret == -1) {
+            strcpy(respdu->caData, UNKNOW_ERROR);
+        } else if (ret == 0) {
+            strcpy(respdu->caData, EXIST_FRIEND);
+        } else if (ret == 1) {
+            MyTcpServer::getInstance().resend(caPerName, pdu);
+        } else if (ret == 2) {
+            strcpy(respdu->caData, ADD_FRIEND_OFFLINE);
+        } else {
+            strcpy(respdu->caData, ADD_FRIEND_NOEXIST);
+        }
+        if (ret != 1) {
+            write((char*)respdu, respdu->uiPDULen);
+            free(respdu);
+            respdu = NULL;
+        }
+        break;
+    }
+    case ENUM_MSG_TYPE_ADD_FRIEND_AGREE: {
+        char addedName[32] = {'\0'};
+        char sourceName[32] = {'\0'};
+        // 拷贝读取的信息
+        strncpy(addedName, pdu->caData, 32);
+        strncpy(sourceName, pdu->caData + 32, 32);
+
+        pdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_AGREE;
+        // 将新的好友关系信息写入数据库
+        OpeDB::getInstance().handleAddFriendAgree(addedName, sourceName);
+        // 服务器需要转发给发送好友请求方其被同意的消息
+        MyTcpServer::getInstance().resend(sourceName, pdu);
+        break;
+    }
+    case ENUM_MSG_TYPE_ADD_FRIEND_REFUSE: {
+        char sourceName[32] = {'\0'};
+            // 拷贝读取的信息
+        strncpy(sourceName, pdu -> caData + 32, 32);
+        pdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_REFUSE;
+        // 服务器需要转发给发送好友请求方其被拒绝的消息
+        MyTcpServer::getInstance().resend(sourceName, pdu);
         break;
     }
     default: break;
