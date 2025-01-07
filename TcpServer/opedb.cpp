@@ -139,7 +139,7 @@ int OpeDB::getIdByUserName(const char *name)
     QString data = QString("select id from usrInfo where name=\'%1\'").arg(name);
     QSqlQuery query;
     query.exec(data);
-    qDebug() << data;
+    // qDebug() << data;
     if(query.next())
     {
         return query.value(0).toInt();
@@ -160,4 +160,25 @@ void OpeDB::handleAddFriendAgree(const char *perName, const char *loginName)
     QSqlQuery query;
     query.exec(strQuery);
     return;
+}
+
+QStringList OpeDB::handleFlushFriend(const char *sourceName)
+{
+    QStringList strFriendList;
+    strFriendList.clear();
+    if (sourceName == NULL) return strFriendList;
+    QString data = QString("select * from usrInfo "
+                           "where id=(select id from friendInfo where friendId=(select id from usrInfo where name=\'%1\')) "
+                           "or id=(select friendId from friendInfo where id=(select id from usrInfo where name=\'%2\')) ")
+                       .arg(sourceName).arg(sourceName);
+    QSqlQuery query;
+    query.exec(data);
+    while (query.next()) {
+        // QString userMes = query.value(1).toString() + (query.value(3).toBool() ? " (在线)" : " (离线)");
+        // qDebug() << userMes;
+        // strFriendList.append(userMes);
+        strFriendList.append(query.value(1).toString());
+        strFriendList.append(query.value(3).toString());
+    }
+    return strFriendList;
 }

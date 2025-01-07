@@ -24,6 +24,7 @@ public:
     int handleAddFriend(const char *perName, const char *loginName);
     int getIdByUserName(const char *name);
     void handleAddFriendAgree(const char *perName, const char *loginName);
+    QStringList handleFlushFriend(const char *sourceName);
 
 signals:
 

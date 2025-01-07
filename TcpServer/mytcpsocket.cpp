@@ -135,11 +135,28 @@ void MyTcpSocket::recvMsg()
     }
     case ENUM_MSG_TYPE_ADD_FRIEND_REFUSE: {
         char sourceName[32] = {'\0'};
-            // 拷贝读取的信息
+        // 拷贝读取的信息
         strncpy(sourceName, pdu -> caData + 32, 32);
         pdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_REFUSE;
         // 服务器需要转发给发送好友请求方其被拒绝的消息
         MyTcpServer::getInstance().resend(sourceName, pdu);
+        break;
+    }
+    case ENUM_MSG_TYPE_FLUSH_FRIEND_REQUEST: {
+        char sourceName[32] = {'\0'};
+        // 拷贝读取的信息
+        strncpy(sourceName, pdu -> caData, 32);
+        QStringList res = OpeDB::getInstance().handleFlushFriend(sourceName);
+        uint uiMsgLen = res.size() / 2 * 36;  // 36 char[32] 好友名字 + 4 int 在线状态
+        PDU *respdu = mkPDU(uiMsgLen);
+        respdu->uiMsgType = ENUM_MSG_TYPE_FLUSH_FRIEND_RESPOND;
+        for (int i = 0; i * 2 < res.size(); i++) {
+            memcpy((char*)(respdu->caMsg) + 36 * i, res.at(i * 2).toStdString().c_str(), 32);
+            memcpy((char*)(respdu->caMsg) + 36 * i + 32, res.at(i * 2 + 1).toStdString().c_str(), 4);
+        }
+        write((char*)respdu, respdu->uiPDULen);
+        free(respdu);
+        respdu = NULL;
         break;
     }
     default: break;

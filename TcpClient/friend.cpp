@@ -5,8 +5,8 @@
 Friend::Friend(QWidget *parent)
     : QWidget{parent}
 {
-    m_pshowMsgTE = new QTextEdit;
-    m_pfrindListWidget = new QListWidget;
+    m_pshowMsgTE = new QTextEdit; // 信息展示框
+    m_pfrindListWidget = new QListWidget;  // 好友列表
     m_pInputMsgLE = new QLineEdit;
 
     m_pDelFriendPB = new QPushButton("删除好友");
@@ -26,7 +26,9 @@ Friend::Friend(QWidget *parent)
 
     QHBoxLayout *pTopHBL = new QHBoxLayout;
     pTopHBL->addWidget(m_pshowMsgTE);
+    pTopHBL->setStretch(0, 2);  // 设置 m_pshowMsgTE 的伸缩因子为 2
     pTopHBL->addWidget(m_pfrindListWidget);
+    pTopHBL->setStretch(1, 1);  // 设置 m_pfrindListWidget 的伸缩因子为 1
     pTopHBL->addLayout(pRightPBVBL);
 
     QHBoxLayout *pMsgHBL = new QHBoxLayout;
@@ -47,15 +49,40 @@ Friend::Friend(QWidget *parent)
             , this, SLOT(showOnline()));
     connect(m_pSearchUsrPB, SIGNAL(clicked(bool))
             , this, SLOT(searchUsr()));
+    connect(m_pflushFriendPB, SIGNAL(clicked(bool))
+            , this, SLOT(flushFriend()));
 }
 
-// 显示在线用户
+// 显示在线用户到列表中
 void Friend::showAllOnlineUsr(PDU *pdu)
 {
     if (pdu == NULL) return;
     m_pOnline->showUsr(pdu);
 }
 
+// 刷新好友列表
+void Friend::flushFriendList(PDU *pdu)
+{
+    m_pfrindListWidget->clear();
+    if (pdu == NULL) return;
+
+    char caName[32] = {'\0'};
+    char onlineStatus[4] = {'\0'};
+    uint strSize = pdu->uiMsgLen / 36;
+
+    m_pfrindListWidget->clear();
+    for(uint i = 0; i < strSize ; i++)
+    {
+        memcpy(caName, (char*)(pdu->caMsg) + i * 36, 32);
+        memcpy(onlineStatus, (char*)(pdu->caMsg) + 32 + i * 36, 4);
+        // qDebug() << "客户端好友" << caName << " " << onlineStatus;
+        m_pfrindListWidget->addItem(QString("%1\t%2").arg(caName)
+                                         .arg(strcmp(onlineStatus, "1") == 0?"在线":"离线"));
+    }
+    return;
+}
+
+// 显示在线用户按钮
 void Friend::showOnline()
 {
     if (m_pOnline->isHidden()) {
@@ -70,6 +97,7 @@ void Friend::showOnline()
     }
 }
 
+// 搜索好友按钮
 void Friend::searchUsr()
 {
     m_strSearchName = QInputDialog::getText(this, "搜索", "用户名: ");
@@ -82,3 +110,20 @@ void Friend::searchUsr()
         pdu = NULL;
     }
 }
+
+
+// 刷新好友列表按钮
+void Friend::flushFriend()
+{
+    QString strName = TcpClient::getInstance().strLoginName();
+    PDU *pdu = mkPDU(0);
+    pdu->uiMsgType = ENUM_MSG_TYPE_FLUSH_FRIEND_REQUEST;
+    memcpy(pdu->caData, strName.toStdString().c_str(), strName.size());
+    TcpClient::getInstance().getTcpSokcet().write((char*)pdu, pdu->uiPDULen);
+    free(pdu);
+    pdu = NULL;
+}
+
+
+
+
