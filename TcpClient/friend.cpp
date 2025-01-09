@@ -1,6 +1,7 @@
 #include "friend.h"
 #include "tcpclient.h"
 #include <QInputDialog>
+#include <QMessageBox>
 
 Friend::Friend(QWidget *parent)
     : QWidget{parent}
@@ -51,6 +52,8 @@ Friend::Friend(QWidget *parent)
             , this, SLOT(searchUsr()));
     connect(m_pflushFriendPB, SIGNAL(clicked(bool))
             , this, SLOT(flushFriend()));
+    connect(m_pDelFriendPB, SIGNAL(clicked(bool))
+            , this, SLOT(delFriend()));
 }
 
 // 显示在线用户到列表中
@@ -122,6 +125,27 @@ void Friend::flushFriend()
     TcpClient::getInstance().getTcpSokcet().write((char*)pdu, pdu->uiPDULen);
     free(pdu);
     pdu = NULL;
+}
+
+// 删除好友按钮
+void Friend::delFriend()
+{
+    if(NULL == m_pfrindListWidget->currentItem())
+    {
+        QMessageBox::warning(this, "删除好友", "请选择要删除的好友");
+        return;
+    }
+    else {
+        QString strFriendName = m_pfrindListWidget->currentItem()->text().split("\t")[0];;
+        QString strSourceName = TcpClient::getInstance().strLoginName();
+        PDU *pdu = mkPDU(0);
+        pdu->uiMsgType = ENUM_MSG_TYPE_DELETE_FRIEND_REQUEST;
+        memcpy(pdu->caData, strFriendName.toStdString().c_str(), 32);
+        memcpy(pdu->caData + 32, strSourceName.toStdString().c_str(), 32);
+        TcpClient::getInstance().getTcpSokcet().write((char*)pdu, pdu->uiPDULen);
+        free(pdu);
+        pdu = NULL;
+    }
 }
 
 

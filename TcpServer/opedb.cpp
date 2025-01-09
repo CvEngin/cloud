@@ -104,6 +104,7 @@ int OpeDB::handleSearchUsr(const char *name)
     }
 }
 
+// 添加好友前检索好友信息是否存在
 int OpeDB::handleAddFriend(const char *perName, const char *loginName)
 {
     if (perName == NULL || loginName == NULL) return -1;
@@ -130,6 +131,7 @@ int OpeDB::handleAddFriend(const char *perName, const char *loginName)
     }
 }
 
+// 通过name找id
 int OpeDB::getIdByUserName(const char *name)
 {
     if(NULL == name)
@@ -150,6 +152,7 @@ int OpeDB::getIdByUserName(const char *name)
     }
 }
 
+// 增加好友
 void OpeDB::handleAddFriendAgree(const char *perName, const char *loginName)
 {
     if(NULL == perName || NULL == loginName) return;
@@ -162,15 +165,17 @@ void OpeDB::handleAddFriendAgree(const char *perName, const char *loginName)
     return;
 }
 
+// 搜索好友列表
 QStringList OpeDB::handleFlushFriend(const char *sourceName)
 {
     QStringList strFriendList;
     strFriendList.clear();
     if (sourceName == NULL) return strFriendList;
     QString data = QString("select * from usrInfo "
-                           "where id=(select id from friendInfo where friendId=(select id from usrInfo where name=\'%1\')) "
-                           "or id=(select friendId from friendInfo where id=(select id from usrInfo where name=\'%2\')) ")
+                           "where id in (select id from friendInfo where friendId=(select id from usrInfo where name=\'%1\')) "
+                           "or id in (select friendId from friendInfo where id=(select id from usrInfo where name=\'%2\'))")
                        .arg(sourceName).arg(sourceName);
+    // qDebug() << data;
     QSqlQuery query;
     query.exec(data);
     while (query.next()) {
@@ -181,4 +186,18 @@ QStringList OpeDB::handleFlushFriend(const char *sourceName)
         strFriendList.append(query.value(3).toString());
     }
     return strFriendList;
+}
+
+// 删除好友
+bool OpeDB::handleDelFriend(const char *perName, const char *loginName)
+{
+    if (perName == NULL || loginName == NULL) return false;
+    int sourceId = getIdByUserName(loginName);
+    int deleteId = getIdByUserName(perName); // 请求方name对应的id
+    // qDebug() << sourceId << deleteId << perName;
+    QString data = QString("delete from friendInfo where (id=\'%1\' and friendId=\'%2\') or (id=\'%3\' and friendId =\'%4\')")
+                       .arg(sourceId).arg(deleteId).arg(deleteId).arg(sourceId);
+    QSqlQuery query;
+    query.exec(data);
+    return true;
 }

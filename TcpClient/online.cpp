@@ -21,8 +21,13 @@ void Online::showUsr(PDU *pdu)
     uint uiSize = pdu->uiMsgLen / 32;
     char caTmp[32];
     ui->online_lw->clear();
-    for (uint i = 0; i < uiSize; i++) {
+    for(uint i = 0; i < uiSize; i++){
         memcpy(caTmp, (char*)(pdu->caMsg) + i * 32, 32);
+        // 补充：不显示自己信息，防止之后添加自己为好友等操作错误
+        if(strcmp(caTmp, TcpClient::getInstance().strLoginName().toStdString().c_str()) == 0)
+        {
+            continue;
+        }
         ui->online_lw->addItem(caTmp);
     }
 }
