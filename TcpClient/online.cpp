@@ -32,6 +32,7 @@ void Online::showUsr(PDU *pdu)
     }
 }
 
+// 添加好友按钮
 void Online::on_addFriend_pb_clicked()
 {
     QString strPerUsrName = ui->online_lw->currentItem()->text();

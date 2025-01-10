@@ -11,6 +11,7 @@ MyTcpServer &MyTcpServer::getInstance()
     return instance;
 }
 
+// 接受客户端的消息
 void MyTcpServer::incomingConnection(qintptr handle)
 {
     qDebug() << "new client connected";
@@ -22,6 +23,7 @@ void MyTcpServer::incomingConnection(qintptr handle)
             , this, SLOT(deleteSocket(MyTcpSocket*)));
 }
 
+// 通过socket向指定用户名的客户端发送信息
 void MyTcpServer::resend(const char *perName, PDU *pdu)
 {
     if (perName == NULL || pdu == NULL) return;
@@ -34,6 +36,7 @@ void MyTcpServer::resend(const char *perName, PDU *pdu)
     }
 }
 
+// 用户下线后，根据用户名删除其socket
 void MyTcpServer::deleteSocket(MyTcpSocket *mySocket)
 {
     QList<MyTcpSocket*>::iterator iter = m_tcpSocketList.begin();

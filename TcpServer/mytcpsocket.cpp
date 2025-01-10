@@ -18,6 +18,7 @@ QString MyTcpSocket::getName()
     return m_strName;
 }
 
+// 接受消息并处理
 void MyTcpSocket::recvMsg()
 {
     // qDebug() << "总数据大小：" << this->bytesAvailable(); // 打印接收到的大小
@@ -27,6 +28,7 @@ void MyTcpSocket::recvMsg()
     PDU *pdu = mkPDU(uiMsgLen);
     this->read((char*)pdu+sizeof(uint), uiPDULen - sizeof(uint));
     switch(pdu->uiMsgType) {
+        // 注册请求
     case ENUM_MSG_TYPE_REGIST_REQUEST: {
         char caName[32] = {'\0'};
         char caPwd[32] = {'\0'};
@@ -45,6 +47,7 @@ void MyTcpSocket::recvMsg()
         respdu = NULL;
         break;
     }
+        // 登录请求
     case ENUM_MSG_TYPE_LOGIN_REQUEST: {
         char caName[32] = {'\0'};
         char caPwd[32] = {'\0'};
@@ -64,6 +67,7 @@ void MyTcpSocket::recvMsg()
         respdu = NULL;
         break;
     }
+        // 获取在线用户请求
     case ENUM_MSG_TYPE_ALL_ONLINE_REQUEST: {
         QStringList res = OpeDB::getInstance().handleAllOnline();
         uint uiMsgLen = res.size() * 32;
@@ -77,6 +81,7 @@ void MyTcpSocket::recvMsg()
         respdu = NULL;
         break;
     }
+        // 搜索用户请求
     case ENUM_MSG_TYPE_SEARCH_USR_REQUEST: {
         int res = OpeDB::getInstance().handleSearchUsr(pdu->caData);
         PDU *respdu = mkPDU(0);
@@ -93,6 +98,7 @@ void MyTcpSocket::recvMsg()
         respdu = NULL;
         break;
     }
+        // 增加好友请求
     case ENUM_MSG_TYPE_ADD_FRIEND_REQUEST: {
         char caPerName[32] = {'\0'};
         char caLoginName[32] = {'\0'};
@@ -119,6 +125,7 @@ void MyTcpSocket::recvMsg()
         }
         break;
     }
+        // 同意增加好友
     case ENUM_MSG_TYPE_ADD_FRIEND_AGREE: {
         char addedName[32] = {'\0'};
         char sourceName[32] = {'\0'};
@@ -133,6 +140,7 @@ void MyTcpSocket::recvMsg()
         MyTcpServer::getInstance().resend(sourceName, pdu);
         break;
     }
+        // 拒绝增加好友
     case ENUM_MSG_TYPE_ADD_FRIEND_REFUSE: {
         char sourceName[32] = {'\0'};
         // 拷贝读取的信息
@@ -142,6 +150,7 @@ void MyTcpSocket::recvMsg()
         MyTcpServer::getInstance().resend(sourceName, pdu);
         break;
     }
+        // 刷新好友列表
     case ENUM_MSG_TYPE_FLUSH_FRIEND_REQUEST: {
         char sourceName[32] = {'\0'};
         // 拷贝读取的信息
@@ -159,6 +168,7 @@ void MyTcpSocket::recvMsg()
         respdu = NULL;
         break;
     }
+        // 删除好友
     case ENUM_MSG_TYPE_DELETE_FRIEND_REQUEST: {
         char delName[32] = {'\0'};
         char sourceName[32] = {'\0'};
@@ -174,6 +184,17 @@ void MyTcpSocket::recvMsg()
         write((char*)respdu, respdu->uiPDULen);
         free(respdu);
         respdu = NULL;
+        break;
+    }
+        // 私聊
+    case ENUM_MSG_TYPE_PRIVATE_CHAT_REQUEST:
+    {
+        char sourceName[32] = {'\0'};
+        char chatName[32] = {'\0'};
+        strncpy(sourceName, pdu->caData, 32);
+        strncpy(chatName, pdu->caData + 32, 32);
+        MyTcpServer::getInstance().resend(chatName, pdu);
+        MyTcpServer::getInstance().resend(sourceName, pdu);
         break;
     }
     default: break;

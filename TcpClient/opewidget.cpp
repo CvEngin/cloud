@@ -30,6 +30,7 @@ OpeWidget &OpeWidget::getInstance()
     return instance;
 }
 
+// 获取好友名称
 Friend *OpeWidget::getFriend()
 {
     return m_pFriend;

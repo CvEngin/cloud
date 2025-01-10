@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QHostAddress>
+#include "privatechat.h"
 
 TcpClient::TcpClient(QWidget *parent)
     : QMainWindow(parent)
@@ -145,6 +146,19 @@ void TcpClient::recvMsg()
         QMessageBox::information(this, "删除好友", QString("%1 已解除与您的好友关系！").arg(sourceName));
         break;
     }
+    case ENUM_MSG_TYPE_PRIVATE_CHAT_REQUEST : // 处理服务器转发过来的私聊请求
+    {
+        if(PrivateChat::getInstance().isHidden())
+        {
+            PrivateChat::getInstance().show();
+        }
+        char caSendName[32] = {'\0'}; // 获取发送方用户名
+        strncpy(caSendName, pdu->caData, 32);
+        QString sendName = caSendName;
+        PrivateChat::getInstance().setChatName(sendName);
+        PrivateChat::getInstance().updateMsg(pdu);
+        break;
+    }
     default: break;
     }
     free(pdu);
@@ -213,6 +227,7 @@ void TcpClient::on_cancel_pb_clicked()
 
 }
 
+// 获取登录的用户名
 QString TcpClient::strLoginName() const
 {
     return m_strLoginName;
