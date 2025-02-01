@@ -26,6 +26,33 @@ typedef unsigned int uint;
 #define DEL_FRIEND_OK "delete friend ok"
 #define DEL_FRIEND_ERROR "delete friend error"
 
+#define DIR_N0_EXSIT "dir no exist"
+#define DIR_ALREADY_EXSIT "dir already exist"
+#define CREATE_DIR_OK "create dir ok"
+
+#define DIR_DELETE_OK "dir delete ok"
+#define DIR_DELETE_FAILED "dir delete failed"
+
+#define RENAME_FILE_OK "rename file ok"
+#define RENAME_FILE_FAILED "rename file failed"
+
+
+#define ENTER_DIR_FAILED "enter dir failed"
+
+#define UPLOAD_FILE_OK "upload file ok"
+#define UPLOAD_FILE_FAILED "upload file failed"
+
+#define FILE_DELETE_OK "file delete ok"
+#define FILE_DELETE_FAILED "file delete failed"
+
+#define SHARE_FILE_OK "share file ok"
+#define SHARE_FILE_FAILED "share file failed"
+
+#define MOVE_FILE_OK "move file ok"
+#define MOVE_FILE_FAILED "move file failed, not dir"
+
+#define COMMON_ERROR "failed:system is busy"
+
 
 enum ENUM_MSG_TYPE {
     ENUM_MSG_TYPE_MIN = 0,
@@ -56,7 +83,48 @@ enum ENUM_MSG_TYPE {
     ENUM_MSG_TYPE_PRIVATE_CHAT_REQUEST, // 私聊请求
     ENUM_MSG_TYPE_PRIVATE_CHAT_RESPOND, // 私聊回复
 
+    ENUM_MSG_TYPE_GROUP_CHAT_REQUEST, // 群聊请求
+    ENUM_MSG_TYPE_GROUP_CHAT_RESPOND, // 群聊回复
+
+    ENUM_MSG_TYPE_CREATE_DIR_REQUEST,   //创建文件夹请求
+    ENUM_MSG_TYPE_CREATE_DIR_RESPOND,   //创建文件夹回复
+
+    ENUM_MSG_TYPE_FLUSH_FILE_REQUEST,   //刷新文件请求
+    ENUM_MSG_TYPE_FLUSH_FILE_RESPOND,   //刷新文件回复
+
+    ENUM_MSG_TYPE_DELETE_DIR_REQUEST,   //刷新文件夹请求
+    ENUM_MSG_TYPE_DELETE_DIR_RESPOND,   //删除文件夹回复
+
+    ENUM_MSG_TYPE_RENAME_FILE_REQUEST,   //重命名文件请求
+    ENUM_MSG_TYPE_RENAME_FILE_RESPOND,   //重命名文件回复
+
+    ENUM_MSG_TYPE_ENTER_DIR_REQUEST,   //进入文件夹请求
+    ENUM_MSG_TYPE_ENTER_DIR_RESPOND,   //进入文件夹回复
+
+    ENUM_MSG_TYPE_UPLOAD_FILE_REQUEST,   //上传文件请求
+    ENUM_MSG_TYPE_UPLOAD_FILE_RESPOND,   //上传文件回复
+
+    ENUM_MSG_TYPE_DELETE_FILE_REQUEST,   //删除文件请求
+    ENUM_MSG_TYPE_DELETE_FILE_RESPOND,   //删除文件回复
+
+    ENUM_MSG_TYPE_DOWNLOAD_FILE_REQUEST,   //下载文件请求
+    ENUM_MSG_TYPE_DOWNLOAD_FILE_RESPOND,   //下载文件回复
+
+    ENUM_MSG_TYPE_SHARE_FILE_REQUEST,   //分享文件请求
+    ENUM_MSG_TYPE_SHARE_FILE_RESPOND,   //分享文件回复
+
+    ENUM_MSG_TYPE_SHARE_FILE_NOTE_REQUEST,   //分享文件通知请求
+    ENUM_MSG_TYPE_SHARE_FILE_NOTE_RESPOND,   //分享文件通知回复
+
+    ENUM_MSG_TYPE_MOVE_FILE_REQUEST,   //移动文件请求
+    ENUM_MSG_TYPE_MOVE_FILE_RESPOND,   //移动文件回复
+
     ENUM_MSG_TYPE_MAX = 0x00ffffff,
+};
+
+struct FileInfo{
+    char caFileName[32];  // 文件名
+    int iFileType;  // 文件类型
 };
 
 struct PDU{

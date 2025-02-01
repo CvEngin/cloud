@@ -57,6 +57,8 @@ Friend::Friend(QWidget *parent)
             , this, SLOT(delFriend()));
     connect(m_pPrivateChatPB, SIGNAL(clicked(bool))
             , this, SLOT(privateChat()));
+    connect(m_pMsgSendPB, SIGNAL(clicked(bool))
+           , this, SLOT(groupChat()));
 }
 
 // 显示在线用户到列表中
@@ -88,6 +90,23 @@ void Friend::flushFriendList(PDU *pdu)
     return;
 }
 
+// 刷新群聊信息
+void Friend::updateGroupMsg(PDU *pdu)
+{
+    if(NULL == pdu)
+    {
+        return;
+    }
+    QString strMsg = QString("%1 says: %2").arg(pdu->caData).arg((char*)pdu->caMsg);
+    m_pshowMsgTE->append(strMsg);
+}
+
+QListWidget *Friend::getFriendList()
+{
+    // flushFriend();
+    return m_pfrindListWidget;
+}
+
 // 显示在线用户按钮
 void Friend::showOnline()
 {
@@ -116,7 +135,6 @@ void Friend::searchUsr()
         pdu = NULL;
     }
 }
-
 
 // 刷新好友列表按钮
 void Friend::flushFriend()
@@ -151,6 +169,7 @@ void Friend::delFriend()
     }
 }
 
+// 私聊按钮
 void Friend::privateChat()
 {
     if(NULL == m_pfrindListWidget->currentItem())
@@ -166,6 +185,26 @@ void Friend::privateChat()
             PrivateChat::getInstance().show();
         }
     }
+}
+
+// 群聊按钮
+void Friend::groupChat()
+{
+    QString strMsg = m_pInputMsgLE->text();
+    if(strMsg.isEmpty())
+    {
+        QMessageBox::warning(this, "好友群发", "信息不能为空");
+        return;
+    }
+    PDU *pdu = mkPDU(strMsg.size() + 1);
+    pdu->uiMsgType = ENUM_MSG_TYPE_GROUP_CHAT_REQUEST;
+    QString sourceName = TcpClient::getInstance().strLoginName();
+    strncpy(pdu->caData ,sourceName.toStdString().c_str(), sourceName.size());  //群发的人
+    strncpy((char*)pdu->caMsg, strMsg.toStdString().c_str(), strMsg.size());    //群发的信息
+    TcpClient::getInstance().getTcpSokcet().write((char*)pdu, pdu->uiPDULen);
+    m_pInputMsgLE->clear();
+    free(pdu);
+    pdu = NULL;
 }
 
 

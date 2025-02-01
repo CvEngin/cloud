@@ -201,3 +201,18 @@ bool OpeDB::handleDelFriend(const char *perName, const char *loginName)
     query.exec(data);
     return true;
 }
+
+// 群发消息时查找在线好友
+QStringList OpeDB::handleGroupChat(const char *name)
+{
+    QStringList strFriendList;
+    strFriendList.clear();
+    if(NULL == name)
+    {
+        return strFriendList;
+    }
+    strFriendList = handleFlushFriend(name);
+    strFriendList.append(name);
+    strFriendList.append("在线");
+    return strFriendList;
+}

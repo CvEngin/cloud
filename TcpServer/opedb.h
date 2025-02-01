@@ -26,6 +26,7 @@ public:
     void handleAddFriendAgree(const char *perName, const char *loginName);
     QStringList handleFlushFriend(const char *sourceName);
     bool handleDelFriend(const char *perName, const char *loginName);
+    QStringList handleGroupChat(const char *name);
 
 signals:
 

@@ -29,6 +29,9 @@ public:
     QTcpSocket &getTcpSokcet();
 
     QString strLoginName() const;
+    QString getM_strCurPath() const;
+
+    void setCurPath(QString strCurPath);
 
 public slots:
     void showConnect();
@@ -51,5 +54,9 @@ private:
     // 连接服务器，和服务器数据交互
     QTcpSocket m_tcpSocket;
     QString m_strLoginName; // 当前登录用户的用户名
+
+    QString m_strCurPath; // 记录当前文件路径
+
+    QFile m_file; // 下载的文件
 };
 #endif // TCPCLIENT_H
